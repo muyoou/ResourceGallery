@@ -1,7 +1,32 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+const fs = require("fs");
+const path = require("path");
+
+async function openFile(_, files : string[]){
+  let out = [] as any[]
+  console.log(files)
+  files.forEach(file =>{
+    if (file) out.push(TraverseFolder(file))
+  })
+  return out
+}
+
+function TraverseFolder(folder){
+  let stats = fs.statSync(folder)
+  if(stats.isDirectory()){
+    let out = {isDir:true, childs :[] as any[]}
+    let arr = fs.readdirSync(folder)
+    arr.forEach(file => {
+      let fullPath = path.join(folder,file)
+      out.childs.push(TraverseFolder(fullPath))
+    });
+    return out
+  }else
+    return {isDir:false, name:path.basename(folder), extname:path.extname(folder), fullPath:folder}
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -39,6 +64,7 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  ipcMain.handle('dialog:openFile', openFile)
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
