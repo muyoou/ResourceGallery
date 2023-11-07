@@ -6,18 +6,35 @@ const fs = require("fs");
 const path = require("path");
 
 async function openFile(_, files : string[]){
-  let out = [] as any[]
+  let out = new Array()
   console.log(files)
   files.forEach(file =>{
-    if (file) out.push(TraverseFolder(file))
+    if (file) {
+      let node = TraverseFolder(file)
+      fileTreeToList(node, out, -1, 0)
+    }
   })
   return out
+}
+
+function fileTreeToList(node, list:Array<any>, prev, level){
+  if(node.isDir){
+    list.push({isDir:true, name:node.name, prev: prev, level:level, isOpen:false, isDisplay: level==0?true:false, type: 0, isBtn: false})
+    let fatherIndex = list.length-1
+    node.childs.forEach((item)=>{
+      fileTreeToList(item, list, fatherIndex, level+1)
+    })
+  }else{
+    node.prev = prev
+    node.level = level
+    list.push(node)
+  }
 }
 
 function TraverseFolder(folder){
   let stats = fs.statSync(folder)
   if(stats.isDirectory()){
-    let out = {isDir:true, childs :[] as any[]}
+    let out = {isDir:true, childs :[] as any[], name:path.basename(folder)}
     let arr = fs.readdirSync(folder)
     arr.forEach(file => {
       let fullPath = path.join(folder,file)

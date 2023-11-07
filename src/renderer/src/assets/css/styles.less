@@ -102,6 +102,9 @@ a:hover {
   margin: auto;
   width: 500px;
   height: 600px;
+  .card-body{
+    overflow: scroll;
+  }
 }
 
 .card-title{
@@ -116,5 +119,38 @@ a:hover {
   text-align: end;
   a{
     margin-right: 10px;
+  }
+}
+
+
+
+.fileTree{
+  padding: 5px;
+}
+
+.fileTree:hover{
+  background-color: whitesmoke;
+}
+
+a:hover{
+  border-bottom-color: #dee2e6;
+}
+
+.list-btn{
+  float: right;
+  padding: 0px 10px;
+  color: gray;
+  visibility:hidden;
+}
+
+.file-list:hover{
+  .list-btn{
+    visibility: visible;
+  }
+}
+
+.file-list{
+  .btn-group{
+    margin-top: 10px;
   }
 }
