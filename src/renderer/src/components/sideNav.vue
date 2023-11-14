@@ -6,6 +6,7 @@ const classification = ref(['视频','漫画','图片'])
 
 <template>
   <nav id='side-nav'>
+    <div>
     <div class="icon-text" style="margin-bottom: 60px;">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list"
         viewBox="0 0 16 16">
@@ -16,5 +17,7 @@ const classification = ref(['视频','漫画','图片'])
     <ul class="list-group list-group-flush">
       <li class="list-group-item" v-for="item in classification">{{item}}</li>
     </ul>
+    </div>
+    <div style="width: 100%;text-align: center;margin-bottom: 30px; height: 40px;">设置</div>
   </nav>
 </template>
