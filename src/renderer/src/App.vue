@@ -2,13 +2,13 @@
 import 'bootstrap';
 import './assets/css/bootstrap.min.css'
 import sideNav from './components/sideNav.vue'
-import content from './components/content.vue'
+import setting from './components/setting.vue'
 import popBox from './components/popBox.vue'
 </script>
 
 <template>
   <sideNav></sideNav>
-  <content></content>
+  <setting></setting>
   <popBox></popBox>
 </template>
 
