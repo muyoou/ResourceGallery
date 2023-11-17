@@ -1,50 +1,60 @@
 <script setup lang="ts">
-import sideNav from './components/sideNav.vue'
-import setting from './components/setting.vue'
-import popBox from './components/popBox.vue'
-import {
-  HomeOutlined,
-  ReadOutlined,
-  LaptopOutlined,
-  PictureOutlined,
-  SettingOutlined,
-} from '@ant-design/icons-vue';
-import { ref } from 'vue';
-const collapsed = ref<boolean>(false);
-const selectedKeys = ref<string[]>(['1']);
+import { ref, computed, onMounted } from 'vue'
+import Home from './components/mainPage.vue'
+import Upload from './components/upload.vue'
+const routes = {
+  '/': Home,
+  '/upload': Upload
+}
+// 是否正在拖动文件
+const isDraging = ref(false)
+// 当前path
+const currentPath = ref(window.location.hash)
+// hash改变路由
+window.addEventListener('hashchange', () => {
+  currentPath.value = window.location.hash
+})
+const currentView = computed(() => {
+  return routes[currentPath.value.slice(1) || '/'] || Home
+})
+// 上次文件列表
+const fileList = [] as string[]
+// 检测文件拖动
+onMounted(() => {
+  let enter = document.getElementById('comp')
+  let dragDiv = document.getElementById('drag-div')
+  enter?.addEventListener('dragenter', (e) => {
+    e.stopPropagation()
+    if(currentView.value == Home)
+    isDraging.value = true
+  })
+  dragDiv?.addEventListener('dragleave', (e) => {
+    e.stopPropagation()
+    isDraging.value = false
+  })
+  dragDiv?.addEventListener('drop', (e) => {
+    e.stopPropagation()
+    isDraging.value = false
+    for (let index in e.dataTransfer?.files) {
+      if(e.dataTransfer?.files[index].path)
+        fileList.push(e.dataTransfer?.files[index].path)
+    }
+    currentPath.value = '#/upload'
+  })
+  dragDiv?.addEventListener('dragover', (e) => {
+    e.preventDefault()
+  })
+})
+
 </script>
 
 <template>
-  <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" collapsible>
-      <div class="logo" />
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <a-menu-item key="1">
-          <home-outlined />
-          <span>主页</span>
-        </a-menu-item>
-        <a-menu-item key="2">
-          <ReadOutlined />
-          <span>漫画</span>
-        </a-menu-item>
-        <a-menu-item key="3">
-          <LaptopOutlined />
-          <span>游戏</span>
-        </a-menu-item>
-        <a-menu-item key="4">
-          <PictureOutlined />
-          <span>图片</span>
-        </a-menu-item>
-        <a-menu-item key="5">
-          <SettingOutlined />
-          <span>设置</span>
-        </a-menu-item>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout>
-      <setting></setting>
-    </a-layout>
-  </a-layout>
+  
+  <a href="#/">Home</a> |
+  <a href="#/upload">Upload</a> |
+  <a href="#/non-existent-path">Broken Link</a>
+  <component id = "comp" :is="currentView" :filePath="fileList"/>
+  <div id="drag-div" :style="{ display: isDraging ? 'inline' : 'none', zIndex:5, opacity: 0.7}">拖动文件或文件夹到此处</div>
 </template>
 <style lang="less">
 @import './assets/css/styles.less';

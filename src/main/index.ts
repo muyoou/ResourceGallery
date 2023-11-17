@@ -6,43 +6,40 @@ const fs = require("fs");
 const path = require("path");
 
 async function openFile(_, files : string[]){
-  let out = new Array()
+  let out = [] as any[]
   console.log(files)
-  files.forEach(file =>{
+  files.forEach((file, index) =>{
     if (file) {
-      let node = TraverseFolder(file)
-      fileTreeToList(node, out, -1, 0)
+      let node = null as any
+      node = TraverseFolder(file,''+index)
+      out.push(node)
+      //fileTreeToList(node, out, -1, 0)
     }
   })
   return out
 }
 
-function fileTreeToList(node, list:Array<any>, prev, level){
-  if(node.isDir){
-    list.push({isDir:true, name:node.name, prev: prev, level:level, isOpen:false, isDisplay: level==0?true:false, type: 0, isBtn: false})
-    let fatherIndex = list.length-1
-    node.childs.forEach((item)=>{
-      fileTreeToList(item, list, fatherIndex, level+1)
-    })
-  }else{
-    node.prev = prev
-    node.level = level
-    list.push(node)
-  }
-}
-
-function TraverseFolder(folder){
+function TraverseFolder(folder, key: string){
   let stats = fs.statSync(folder)
   if(stats.isDirectory()){
-    let out = {isDir:true, childs :[] as any[], name:path.basename(folder)}
+    let out = {isDir:true, children :[] as any[], title:path.basename(folder), key: key}
     let arr = fs.readdirSync(folder)
-    arr.forEach(file => {
+    arr.forEach((file, index) => {
       let fullPath = path.join(folder,file)
-      out.childs.push(TraverseFolder(fullPath))
+      out.children.push(TraverseFolder(fullPath, key+'-'+index))
     });
     return out
   }else
-    return {isDir:false, name:path.basename(folder), extname:path.extname(folder), fullPath:folder}
+    return {
+      isDir:false, 
+      title:path.basename(folder), 
+      extname:path.extname(folder), 
+      fullPath:folder, 
+      key: key, 
+      size:stats.size,
+      birthtime:stats.birthtime,
+      mtime:stats.mtime
+    }
 }
 
 function createWindow(): void {

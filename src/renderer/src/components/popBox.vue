@@ -63,7 +63,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--<div id="drag-div" :style="{ opacity: isDraging ? 0.7 : 0 }">拖动文件或文件夹到此处</div>-->
+  <!---->
   <div class="card" id="pop-box" v-if="isPopBox">
     <h5 class="card-title">手动分类</h5>
     <div class="card-body">

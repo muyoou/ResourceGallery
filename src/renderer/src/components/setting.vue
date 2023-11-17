@@ -56,10 +56,10 @@ const openKeys = ref<string[]>(['sub1']);
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
           <a-typography-title :level="2">识别设置</a-typography-title>
-      <a-typography-text type="secondary">以下设置用来在分析本地文件夹时，对每一个文件夹进行自动分类的设置。分类时将按照以下的条件将文件夹分为漫画、游戏、视频三类</a-typography-text>
+      <a-typography-text type="secondary">以下设置用来在分析本地资源时，对每一个资源进行自动分类的设置。分类时将按照以下的条件将资源分为漫画、游戏、视频三类</a-typography-text>
       <a-divider />
       <a-typography-title :level="3">漫画分类</a-typography-title>
-      <a-typography-text type="secondary">以下为将一个文件夹判定为包含漫画的文件夹的自定义条件</a-typography-text>
+      <a-typography-text type="secondary">以下为将一个图片集合判定为包含漫画的自定义条件</a-typography-text>
         </a-layout-content>
       </a-layout>
 </template>

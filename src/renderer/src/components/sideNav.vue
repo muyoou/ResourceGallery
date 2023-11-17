@@ -1,23 +1,36 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-
-const classification = ref(['视频','漫画','图片'])
+import {
+  HomeOutlined,
+  ReadOutlined,
+  LaptopOutlined,
+  PlaySquareOutlined,
+  SettingOutlined,
+} from '@ant-design/icons-vue';
+const selectedKeys = ref<string[]>(['1']);
 </script>
 
 <template>
-  <nav id='side-nav'>
-    <div>
-    <div class="icon-text" style="margin-bottom: 60px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list"
-        viewBox="0 0 16 16">
-        <path fill-rule="evenodd"
-          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-      </svg>
-    </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item" v-for="item in classification">{{item}}</li>
-    </ul>
-    </div>
-    <div style="width: 100%;text-align: center;margin-bottom: 30px; height: 40px;">设置</div>
-  </nav>
+  <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+    <a-menu-item key="1">
+      <home-outlined />
+      <span>主页</span>
+    </a-menu-item>
+    <a-menu-item key="2">
+      <ReadOutlined />
+      <span>漫画</span>
+    </a-menu-item>
+    <a-menu-item key="3">
+      <LaptopOutlined />
+      <span>游戏</span>
+    </a-menu-item>
+    <a-menu-item key="4">
+      <PlaySquareOutlined />
+      <span>视频</span>
+    </a-menu-item>
+    <a-menu-item key="5">
+      <SettingOutlined />
+      <span>设置</span>
+    </a-menu-item>
+  </a-menu>
 </template>
