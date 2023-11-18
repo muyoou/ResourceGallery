@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { CSSProperties, Ref } from 'vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { MFileSet } from '../object'
 const expandedKeys = ref<string[]>(['0-0-0']);
 const selectedKeys = ref<string[]>([]);
 const props = defineProps(["filePath"])
-const showFileList = ref([]) as Ref<{ name: string, level: number, isDir: boolean, isOpen: boolean, prev: number, isDisplay: boolean, type: number, isBtn: boolean }[]>
-const api = window.api as { openFile: (files: string[]) => Promise<any>; }
-api.openFile(props.filePath).then((value) => {
-  showFileList.value = value
+const showFileList = ref(new MFileSet()) as Ref<MFileSet>
+const api = window.api as { openFile: (files: string[]) => Promise<MFileSet>; }
+api.openFile(props.filePath).then((value: MFileSet) => {
+  showFileList.value.setChildren(value.children)
+  showFileList.value.initChildren()
 })
 const headerStyle: CSSProperties = {
   textAlign: 'center',
@@ -16,6 +18,8 @@ const headerStyle: CSSProperties = {
   lineHeight: '64px',
   backgroundColor: 'white'
 };
+
+const selectedFile = computed(() => showFileList.value.findFileByKey(selectedKeys.value[0]))
 
 const contentStyle: CSSProperties = {
   backgroundColor: 'white',
@@ -51,7 +55,7 @@ const onContextMenuClick = (treeKey: string, menuKey: string | number) => {
       <a-row>
         <a-col flex="auto">
           <a-tree v-model:expandedKeys="expandedKeys" v-model:selectedKeys="selectedKeys" show-line
-            :tree-data="showFileList">
+            :tree-data="showFileList.children">
             <template #title="{ key: treeKey, title }">
               <a-dropdown :trigger="['contextmenu']">
                 <span>{{ title }}</span>
@@ -67,23 +71,16 @@ const onContextMenuClick = (treeKey: string, menuKey: string | number) => {
           </a-tree>
         </a-col>
         <a-col flex="300px">
-          <div class="components-page-header-demo-content">
-    <a-page-header
-      title="Title"
-      class="site-page-header"
-      sub-title="单个文件"
-    >
-      <template #tags>
-        <a-tag color="blue">Running</a-tag>
-      </template>
-      <div>{{ selectedKeys }}
-        <p>
-          Ant Design interprets the color system into two levels: a system-level color system and
-          a product-level color system.
-        </p>
-      </div>
-    </a-page-header>
-  </div>
+          <div class="components-page-header-demo-content" v-if="selectedKeys.length > 0">
+            <a-page-header :title="selectedFile.title" class="site-page-header" sub-title="单个文件">
+              <template #tags>
+                <a-tag color="blue">Running</a-tag>
+              </template>
+              <p>创建时间: 2023年11月8日</p>
+              <p>修改时间: 2023年11月8日</p>
+              <p>文件大小: 21.3 MB</p>
+            </a-page-header>
+          </div>
 
         </a-col>
       </a-row>

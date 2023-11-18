@@ -2,44 +2,36 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { MFile, MFolder, MFileSet } from './object'
 const fs = require("fs");
 const path = require("path");
 
 async function openFile(_, files : string[]){
-  let out = [] as any[]
+  let out = new MFileSet()
   console.log(files)
   files.forEach((file, index) =>{
     if (file) {
       let node = null as any
       node = TraverseFolder(file,''+index)
-      out.push(node)
+      out.pushFile(node)
       //fileTreeToList(node, out, -1, 0)
     }
   })
   return out
 }
 
-function TraverseFolder(folder, key: string){
+function TraverseFolder(folder, key: string): MFile|MFolder{
   let stats = fs.statSync(folder)
   if(stats.isDirectory()){
-    let out = {isDir:true, children :[] as any[], title:path.basename(folder), key: key}
+    let out = new MFolder(folder, path.basename(folder), key, [], stats.size, stats.birthtime, stats.mtime)
     let arr = fs.readdirSync(folder)
     arr.forEach((file, index) => {
       let fullPath = path.join(folder,file)
-      out.children.push(TraverseFolder(fullPath, key+'-'+index))
+      out.pushFile(TraverseFolder(fullPath, key+'-'+index))
     });
     return out
   }else
-    return {
-      isDir:false, 
-      title:path.basename(folder), 
-      extname:path.extname(folder), 
-      fullPath:folder, 
-      key: key, 
-      size:stats.size,
-      birthtime:stats.birthtime,
-      mtime:stats.mtime
-    }
+    return new MFile(folder, path.basename(folder), key, path.extname(folder), stats.size, stats.birthtime, stats.mtime)
 }
 
 function createWindow(): void {
