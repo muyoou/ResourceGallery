@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import type { CSSProperties, Ref } from 'vue';
-import { computed, ref } from 'vue';
-import { MFileSet } from '../object'
+import type { CSSProperties, FunctionalComponent } from 'vue';
+import {Ref, computed, ref, h } from 'vue'
+import { MFileSet, MFile, MFolder } from '../object'
+import newResource from './manage/newResource.vue'
+import {
+  ExclamationCircleOutlined,
+  NodeCollapseOutlined
+} from '@ant-design/icons-vue';
+
+
+
 const expandedKeys = ref<string[]>(['0-0-0']);
 const selectedKeys = ref<string[]>([]);
 const props = defineProps(["filePath"])
@@ -49,11 +57,11 @@ const onContextMenuClick = (treeKey: string, menuKey: string | number) => {
         },
       ]">
       </a-steps>
-      <a-typography-text type="secondary">您可以点击文件或文件夹，在右边的简介中选择新的分类；也可以直接在文件或文件夹上右键选择新的分类。</a-typography-text>
+      <a-typography-text type="secondary">您可以点击文件或文件夹，在右边的简介中新建或添加到已有的资源；也可以直接在文件树上右键操作。</a-typography-text>
     </a-layout-header>
     <a-layout-content :style="contentStyle">
       <a-row>
-        <a-col flex="auto">
+        <a-col flex="1">
           <a-tree v-model:expandedKeys="expandedKeys" v-model:selectedKeys="selectedKeys" show-line
             :tree-data="showFileList.children">
             <template #title="{ key: treeKey, title }">
@@ -70,18 +78,48 @@ const onContextMenuClick = (treeKey: string, menuKey: string | number) => {
             </template>
           </a-tree>
         </a-col>
-        <a-col flex="300px">
-          <div class="components-page-header-demo-content" v-if="selectedKeys.length > 0">
+        <a-col flex="1" style="border-left: 1px solid lightgrey;padding-left: 30px;">
+          <div class="components-page-header-demo-content"
+            v-if="selectedKeys.length > 0 && (selectedFile instanceof MFile)">
             <a-page-header :title="selectedFile.title" class="site-page-header" sub-title="单个文件">
               <template #tags>
-                <a-tag color="blue">Running</a-tag>
+                <a-tag color="blue">未分类</a-tag>
               </template>
-              <p>创建时间: 2023年11月8日</p>
-              <p>修改时间: 2023年11月8日</p>
-              <p>文件大小: 21.3 MB</p>
-            </a-page-header>
-          </div>
 
+            </a-page-header>
+            <div class="file-desc">
+              <p>创建时间: {{ selectedFile.getBirthtime() }}</p>
+              <p>修改时间: {{ selectedFile.getMtime() }}</p>
+              <p>文件大小: {{ selectedFile.size }}</p>
+            </div>
+            <a-typography-text strong>归属于资源：</a-typography-text>
+            <a-card size="small" style="width: 300px">
+              <p>
+                <ExclamationCircleOutlined />暂未分类到资源
+              </p>
+            </a-card>
+            <a-typography-text strong>操作：</a-typography-text><br><a-space>
+              <newResource></newResource>
+              <a-button type="primary" :icon="h(NodeCollapseOutlined as FunctionalComponent)">添加到已有资源</a-button>
+            </a-space>
+          </div>
+          <div class="components-page-header-demo-content"
+            v-if="selectedKeys.length > 0 && (selectedFile instanceof MFolder)">
+            <a-page-header :title="selectedFile.title" class="site-page-header" sub-title="文件夹">
+              <template #tags>
+                <a-tag color="blue">未分类</a-tag>
+              </template>
+            </a-page-header>
+            <div class="file-desc">
+              <p>创建时间: {{ selectedFile.getBirthtime() }}</p>
+              <p>修改时间: {{ selectedFile.getMtime() }}</p>
+            </div>
+            <a-typography-text strong>归属于资源：</a-typography-text>
+            <a-card size="small" style="width: 300px">
+              <p>暂未分类到资源</p>
+            </a-card>
+            <a-typography-text strong>操作：</a-typography-text>
+          </div>
         </a-col>
       </a-row>
 
