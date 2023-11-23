@@ -30,19 +30,6 @@ export class MFileSet{
         this.children.push(file)
     }
 
-    // 根据Key搜索文件集合中的文件，包括文件夹内
-    findFileByKey(key:string):MFile|MFolder{
-        let level = this.children[0].key.split('-')
-        let searchLevel = key.split('-')
-        if(level.length > 1) searchLevel.splice(0,level.length-1)
-        let target:MFile|MFolder  = this.children[searchLevel[0]]
-        searchLevel.splice(0,1)
-        searchLevel.forEach(item =>{
-            if(target instanceof MFileSet) target = target.children[parseInt(item)]
-            else throw new Error("用于查询的key值错误");
-        })
-        return target
-    }
 }
 
 //文件夹类，表示一个文件夹

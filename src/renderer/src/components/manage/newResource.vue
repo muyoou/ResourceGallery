@@ -8,6 +8,16 @@ interface FormState {
   id: number
   region: undefined;
 }
+const props = defineProps({
+  resourceName:{
+    type: String,
+    default:''
+  },
+  resourceID:{
+    type:Number,
+    default: 0
+  }
+})
 const open = ref<boolean>(false);
 const showModal = () => {
   open.value = true;
@@ -37,10 +47,10 @@ const onFinishFailed = (errorInfo: any) => {
     <a-form :model="formState" name="basic" :label-col="{ style: { width: '150px' } }" :wrapper-col="{ span: 16 }"
       autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
       <a-form-item label="资源名称" name="name" :rules="[{ required: true }]">
-        <a-input v-model:value="formState.name" />
+        <a-input v-model:value="props.resourceName" />
       </a-form-item>
       <a-form-item label="资源ID" name="id" :rules="[{ required: true }]">
-        <a-input-number id="inputNumber" v-model:value="formState.id" :min="0" :max="10" />
+        <a-input-number id="inputNumber" v-model:value="props.resourceID" :min="0" :max="10" />
       </a-form-item>
       <a-form-item label="资源类型" name="region" :rules="[{ required: true }]">
         <a-select v-model:value="formState.region" placeholder="请选择资源类型">

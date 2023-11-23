@@ -3,9 +3,12 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { MFile, MFolder, MFileSet } from './object'
+import {SQL} from './sql'
 const fs = require("fs");
 const path = require("path");
 
+
+//通过给出的地址打印文件树
 async function openFile(_, files : string[]){
   let out = new MFileSet()
   console.log(files)
@@ -20,6 +23,7 @@ async function openFile(_, files : string[]){
   return out
 }
 
+// 遍历文件并生成文件树
 function TraverseFolder(folder, key: string): MFile|MFolder{
   let stats = fs.statSync(folder)
   if(stats.isDirectory()){
@@ -82,6 +86,7 @@ app.whenReady().then(() => {
   })
 
   createWindow()
+  SQL.init()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
